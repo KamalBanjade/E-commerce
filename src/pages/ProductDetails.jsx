@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchProductById } from '../services/api'; // Ensure this is your Shopify API fetch
+import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { fetchProductById } from '../services/api';
 import { useCart } from '../context/CartContext';
 import { FaStar, FaShoppingCart } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
@@ -11,6 +11,7 @@ function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const { addToCart } = useCart();
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -52,6 +53,11 @@ function ProductDetails() {
       draggable: true,
       progress: undefined,
     });
+
+    // Navigate to the home page after adding to cart
+    setTimeout(() => {
+      navigate('/');
+    }, 2000); 
   };
 
   return (
@@ -82,7 +88,6 @@ function ProductDetails() {
 
       <div className="reviews-section">
         <h3>Customer Reviews</h3>
-        {/* This section can be dynamically populated with actual reviews from the API */}
         <div className="review-item">
           <img src="/placeholder.png" alt="Reviewer" />
           <div className="review-content">
@@ -97,7 +102,6 @@ function ProductDetails() {
         </div>
       </div>
 
-      {/* Toast container must be included once in your component tree */}
       <ToastContainer />
     </div>
   );
