@@ -1,81 +1,92 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate in v6
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import './login.css';
+import React, { useState } from 'react';
+const Login = () => {
+  const [isLogin, setIsLogin] = useState(true); // State to switch between login and register
 
-const API_URL = 'https://your-api-url.com'; // Replace with your actual API URL
-
-function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // useNavigate instead of useHistory
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-
-    try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }), // Send login details
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed! Please check your credentials.'); // Handle login failure
-      }
-
-      const data = await response.json();
-      // Store the authentication token or user info in localStorage
-      localStorage.setItem('token', data.token);
-
-      toast.success('Login successful!', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-
-      // Redirect to home or any other page after successful login
-      navigate('/'); // Redirect after login
-    } catch (error) {
-      toast.error('Login failed. Please try again.', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-      console.error('Error during login:', error);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!isLogin && password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
     }
+    // Handle form submission (login or register)
+    console.log('Submitted:', { email, password });
   };
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+    <div className="auth-container">
+      {isLogin ? (
+        <>
+          <h2>Sign in</h2>
+          <p>
+            Or <span onClick={() => setIsLogin(false)} className="toggle-link">register for an account</span>
+          </p>
+        </>
+      ) : (
+        <>
+          <h2>Register</h2>
+          <p>
+            Or <span onClick={() => setIsLogin(true)} className="toggle-link">sign in to your account</span>
+          </p>
+        </>
+      )}
+
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email address</label>
           <input
             type="email"
             id="email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
+
         <div className="form-group">
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <button type="submit">Login</button>
+
+        {!isLogin && (
+          <div className="form-group">
+            <label htmlFor="confirm-password">Confirm Password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+        )}
+
+        <button type="submit" className="auth-button">
+          {isLogin ? 'Sign in' : 'Register'}
+        </button>
       </form>
-      <ToastContainer />
+
+      {isLogin && (
+        <a href="/forgot-password" className="forgot-password">Forgot your password?</a>
+      )}
+
+      <div className="social-login">
+        <p>Google | Facebook | GitHub</p>
+      </div>
     </div>
   );
-}
+};
 
 export default Login;
