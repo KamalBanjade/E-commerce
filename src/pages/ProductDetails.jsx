@@ -20,7 +20,7 @@ function ProductDetails() {
       } catch (error) {
         toast.error('Failed to load product data.', {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -45,7 +45,7 @@ function ProductDetails() {
     addToCart(product);
     toast.success(`${product.title} added to cart!`, {
       position: "top-right",
-      autoClose: 3000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

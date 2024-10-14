@@ -11,7 +11,7 @@ function App() {
   return (
     <CartProvider>
       <Router>
-        <Navbar />
+        <Navbar /> {/* This stays the same on all pages */}
         <div className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />

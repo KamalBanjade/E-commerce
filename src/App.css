@@ -3,9 +3,10 @@ body,html {
   margin: 0; 
   box-sizing: border-box;  
   padding: 0;   
-  background-color: #f7f2e7; /* Soft beige background */
+  background-color: #f7f2e7; 
   color: #222; /* Darker gray for text */
   line-height: 1.6;
+  overflow-x: hidden; 
 }
 nav {
   display: flex;
@@ -14,10 +15,12 @@ nav {
   padding: 1rem 5%;
   background-color: #ffffff;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 1000;
   transition: all 0.3s ease;
+  width: 100%; /* Full width */
+  box-sizing: border-box;
 }
 
 nav:hover {
@@ -25,14 +28,20 @@ nav:hover {
 }
 
 nav .logo {
-  font-size: 1.8rem;
+  font-size: 2rem; /* Increased size for better visibility */
   font-weight: 700;
   color: #ff8c00;
+  transition: color 0.3s ease; /* Transition effect for logo */
+}
+
+nav .logo:hover {
+  color: #d97300; /* Slightly darker on hover */
 }
 
 nav .nav-links {
   display: flex;
-  gap: 1.5rem; /* Provides space between links */
+  gap: 2rem; /* Increased space between links */
+  align-items: center; /* Align items vertically */
 }
 
 nav a {
@@ -42,13 +51,13 @@ nav a {
   transition: all 0.3s ease;
   padding: 0.5rem 1rem;
   border-radius: 20px;
+  position: relative; /* For positioning the pseudo-element */
 }
 
 nav a:hover {
   background-color: #ff8c00;
   color: #ffffff;
 }
-
 @media (max-width: 768px) {
   nav {
     flex-direction: column;
@@ -57,8 +66,9 @@ nav a:hover {
 
   nav .nav-links {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start; 
     margin-top: 1rem;
+    gap: 1rem; 
   }
 }
 
@@ -169,8 +179,8 @@ button:hover {
   }
 }
 .cart-container {
-  max-width: auto;
-  margin: 0 auto;
+  width: 1090px;
+  margin: 10px auto;
   padding: 2rem 5%;
   background-color: #fff;
   border-radius: 12px;
@@ -205,7 +215,7 @@ p {
   border-radius: 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -311,6 +321,85 @@ p {
   
   .cart-item {     
     width: 100%;
+  }
+}
+/* Empty Cart Styles */
+/* Empty Cart Container */
+.empty-cart-container {
+  width: 1090px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f9f6ed;
+  height: auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-align: center;
+  background-image: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  transition: all 0.3s ease;
+  margin: 0;
+}
+
+.empty-cart-icon {
+  font-size: 5rem;
+  color: #ff8c00;
+  margin-bottom: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.empty-cart-message {
+  font-size: 2.2rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+  max-width: 100%;
+  line-height: 1.4;
+}
+
+.empty-cart-button {
+  width: auto;
+  padding: 1rem 3rem;
+  background-color: #ff8c00;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-radius: 30px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  
+}
+
+.empty-cart-button:hover {
+  background-color: #d97300;
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .empty-cart-container {
+    padding: 1rem;
+    height: auto;
+  }
+
+  .empty-cart-message {
+    font-size: 1.8rem;
+  }
+
+  .empty-cart-button {
+    font-size: 1.2rem;
+    padding: 0.8rem 2rem;
   }
 }
 

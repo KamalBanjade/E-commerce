@@ -1,18 +1,29 @@
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 function Cart() {
   const { cart, removeFromCart } = useCart();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Calculate the total price of items in the cart
   const totalPrice = cart.reduce((total, item) => total + item.price, 0);
+
+  // Function to handle navigation when Start Shopping button is clicked
+  const handleStartShopping = () => {
+    navigate('/'); // Navigate to the Home page
+  };
 
   return (
     <div className="cart-container">
       <h1 className="cart-header">Your Cart</h1>
       <div className="cart-grid">
         {cart.length === 0 ? (
-          <div className="cart-item empty-cart-message" style={{ gridColumn: '1 / -1', minHeight: 'auto', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <p>Your cart is empty.</p>
+          <div className="empty-cart-container">
+            <div className="empty-cart-icon">🛒</div> 
+            <div className="empty-cart-message">Your cart is empty!</div>
+            <button className="empty-cart-button" onClick={handleStartShopping}>
+              Start Shopping
+            </button>
           </div>
         ) : (
           cart.map(item => (
