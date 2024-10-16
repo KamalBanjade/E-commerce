@@ -5,7 +5,7 @@ import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Import Auth context
 import { useState } from 'react';
-import logo from '../assets/logo.png';
+import logo from '/logo.png';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -33,11 +33,16 @@ function Navbar() {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     clearCart(); // Clear the cart when logging out
-    logout(); // Call the logout function
-    navigate('/login'); // Navigate to login page after logout
+    try {
+      await logout(); // Ensure the logout is completed
+      navigate('/'); // Navigate to login page after logout
+    } catch (error) {
+      toast.error('Failed to logout, please try again.'); // Handle logout errors if needed
+    }
   };
+  
 
   return (
     <nav>

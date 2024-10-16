@@ -67,13 +67,16 @@ function ProductDetails() {
           <h1 className="product-title">{product.title}</h1>
           <div className="product-rating">
             {[...Array(5)].map((_, i) => (
-              <FaStar key={i} className={i < Math.round(product.rating?.rate || 0) ? 'star-filled' : 'star-empty'} />
+              <FaStar
+                key={i}
+                className={i < Math.round(product.rating?.rate || 0) ? 'star-filled' : 'star-empty'}
+              />
             ))}
             <span>({product.rating?.count || 0} reviews)</span>
           </div>
           <p className="product-description">{product.description}</p>
           <h3 className="product-price">${product.price.toFixed(2)}</h3>
-          <button className="add-to-cart-btn" onClick={handleAddToCart}>
+          <button className="product-button" onClick={handleAddToCart}>
             <FaShoppingCart /> Add to Cart
           </button>
         </div>
@@ -81,6 +84,7 @@ function ProductDetails() {
 
       <div className="reviews-section">
         <h3>Customer Reviews</h3>
+        {/* Example of a single review item, can be looped for multiple reviews */}
         <div className="review-item">
           <img src="/placeholder.png" alt="Reviewer" />
           <div className="review-content">

@@ -4,6 +4,8 @@
   max-width: auto;
   margin: 0 auto;
   background-color: #257180;
+  border-radius: 30px;
+  margin-top: 40px;
 }
 
 .page-title {
