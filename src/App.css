@@ -54,6 +54,7 @@ nav a {
   border-radius: 40px;
   position: relative; /* For positioning the pseudo-element */
 }
+
 .logo {
   position: relative;
 }
@@ -63,11 +64,33 @@ nav a {
   height: auto; /* Maintain aspect ratio */
   transition: opacity 0.3s ease;
 }
+.cart-icon-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
 
 .cart-icon {
-  font-size: 1.5rem;
-  transition: background-color 0.3s ease;
+  font-size: 1.6rem; /* Adjust the size of the cart icon */
+  color: #2c3e50; /* Darker color for the cart icon */
 }
+.cart-badge {
+  position: absolute;
+  top: 0px; /* Adjust the vertical position */
+  right: 5px; /* Adjust the horizontal position */
+  background-color: #e74c3c; /* Red badge */
+  color: white; /* White text for the badge */
+  border-radius: 50%;
+  padding: 3px 4px; /* Smaller padding */
+  font-size: 0.5rem; /* Smaller font size */
+  font-weight: bold; /* Keep the text bold */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 10.5px; /* Smaller width for a smaller badge */
+  min-height: 10px; /* Smaller height to keep it circular */
+}
+
 
 .cart-icon:hover {
   color: #ff2f00;
@@ -449,8 +472,9 @@ p {
   align-items: flex-start; /* Align items to the start */
   justify-content: space-between;
   background-color: #fff; /* Keep product details background white */
-  border-radius: 30px;
+  border-radius: 20px;
   overflow: hidden; /* Prevent overflow from rounded corners */
+  margin: 15px auto;
 }
 
 .product-image-container {
@@ -554,10 +578,11 @@ p {
 
 /* Reviews section */
 .reviews-section {   
-  margin-top: 40px;   
+  margin-top: 45px;   
   background-color: #f9f9f9;   
   padding: 20px;   
-  border-radius: 12px;
+  border-radius: 30px;
+  margin-bottom: 15px;
 }
 
 .reviews-section h3 {   
@@ -619,7 +644,7 @@ p {
   border-left-color: #4CAF50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-left: 530px;
+  margin-left: 560px;
 }
 
 @keyframes spin {
@@ -673,6 +698,7 @@ input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  color: #222;
 }
 
 button {
@@ -770,51 +796,78 @@ input:focus {
 
 }
 .social-login {
-  margin-top: 30px;
-  font-size: 16px;
-  color: #555;
-  text-align: center;
+  margin-top: 2rem;
 }
 
-.social-login p {
-  margin-bottom: 15px;
-  font-weight: bold;
-  color: #333;
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
 }
 
-.google-login-container,
-.github-login-container {
-  margin-bottom: 15px;
-  text-align: center; /* Center-align the buttons */
+.social-button-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .google-login-button,
 .github-login-button {
-  width: 100%;
-  padding: 12px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
   border-radius: 8px;
-  border: none;
+  padding: 0.6rem 1.2rem;
   color: #fff;
-  font-size: small;
-  font-weight: 500;
+  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  margin-bottom: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  gap: 0.8rem;
 }
 
 .google-login-button {
-  background-color: #00d0ff; /* Red for Google */
-}
-
-.github-login-button {
-  background-color: #333; /* Dark gray for GitHub */
+  background-color: #4285f4; /* Google blue */
+  border: none;
+  margin: 10px auto;
 }
 
 .google-login-button:hover {
-  background-color: #e62b00; /* Slightly darker red on hover */
+  background-color: #357ae8;
+  transform: scale(1.05);
+}
+
+.github-login-button {
+  background-color: #333; /* GitHub dark */
+  border: none;
 }
 
 .github-login-button:hover {
-  background-color: #222; /* Darker gray on hover */
+  background-color: #24292e;
+  transform: scale(1.05);
+}
+
+.google-login-button:disabled,
+.github-login-button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.google-login-button i,
+.github-login-button i {
+  font-size: 1.4rem;
+}
+
+.google-login-button i {
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 0.2rem;
+}
+
+.github-login-button i {
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 0.2rem;
 }

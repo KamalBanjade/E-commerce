@@ -1,5 +1,6 @@
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify'; // Importing toast and ToastContainer
 
 function Cart() {
   const { cart, updateCartQuantity, removeFromCart } = useCart();
@@ -17,13 +18,16 @@ function Cart() {
   const handleRemoveOne = (item) => {
     if (item.quantity > 1) {
       updateCartQuantity(item.id, item.quantity - 1); // Decrease quantity by 1
+      toast.info(`Decreased quantity of ${item.title} by 1`); // Toast notification for decreasing quantity
     } else {
       removeFromCart(item.id); // Remove item if quantity is 1
+      toast.success(`${item.title} removed from cart`); // Toast notification for removal
     }
   };
 
   return (
     <div className="cart-container">
+      <ToastContainer /> {/* This ensures toasts are displayed */}
       <h1 className="cart-header">Your Cart</h1>
       <div className="cart-grid">
         {cart.length === 0 ? (

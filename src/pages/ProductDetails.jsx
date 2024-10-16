@@ -8,7 +8,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../App.css';
 
-
 function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -23,6 +22,7 @@ function ProductDetails() {
         setProduct(fetchedProduct);
       } catch (error) {
         console.error('Failed to load product data');
+        toast.error('Failed to load product data');
       }
     };
 
@@ -42,6 +42,7 @@ function ProductDetails() {
     if (!currentUser) {
       // Redirect to login page with a custom message
       navigate('/login', { state: { message: 'Please login in order to add products to the cart.' } });
+      toast.warn('Please login to add items to your cart');
     } else {
       addToCart(product);
       toast.success('Product added to cart');
@@ -55,6 +56,7 @@ function ProductDetails() {
 
   return (
     <div className="product-details-container">
+      <ToastContainer /> {/* This ensures toasts are displayed */}
       <div className="product-details">
         <div className="product-image-container">
           <img
@@ -84,7 +86,6 @@ function ProductDetails() {
 
       <div className="reviews-section">
         <h3>Customer Reviews</h3>
-        {/* Example of a single review item, can be looped for multiple reviews */}
         <div className="review-item">
           <img src="/placeholder.png" alt="Reviewer" />
           <div className="review-content">

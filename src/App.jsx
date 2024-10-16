@@ -5,9 +5,9 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
-import Login from './pages/login';  // Ensure 'Login' is capitalized
+import Login from './pages/login';  
 import './App.css';
-import { GoogleOAuthProvider } from '@react-oauth/google';  // Import GoogleOAuthProvider
+import { GoogleOAuthProvider } from '@react-oauth/google';  
 import ForgotPassword from './pages/forgotpassword';
 import ResetPassword from './pages/ResetPassword';
 import Profile from './components/profile';  // Ensure correct import for Profile

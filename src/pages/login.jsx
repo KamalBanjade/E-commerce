@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation for state
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../firebase'; // Firebase config
+import { auth } from '../firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faGithub } from '@fortawesome/free-brands-svg-icons';
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);  // Toggle between login and register
-  const [fname, setFname] = useState('');        // Adjusted for backend requirement
+  const [isLogin, setIsLogin] = useState(true);
+  const [fname, setFname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // For registration
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { setUser } = useAuth();  // Destructure setUser from AuthContext
+  const { setUser } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // To access state passed from ProductDetails
+  const location = useLocation();
 
-  // Handle form submission for login/registration
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -38,7 +39,7 @@ const Login = () => {
       if (data.status === 201 || data.status === 'success') {
         toast.success(isLogin ? 'Successfully logged in' : 'Successfully registered');
         setUser({ email: payload.email });
-        navigate('/');  // Redirect to home after login
+        navigate('/');
       } else {
         toast.error(data.message || 'Failed to process request');
       }
@@ -48,37 +49,30 @@ const Login = () => {
     setLoading(false);
   };
 
-  // Extract custom message from location state (if any)
   const customMessage = location.state?.message;
 
-  // Google Sign In
   const handleGoogleSignIn = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then(async (result) => {
-        console.log('Google Signed In:', result.user);
         toast.success('Successfully logged in with Google');
         setUser({ email: result.user.email });
-        navigate('/');  // Redirect after Google login
+        navigate('/');
       })
       .catch((error) => {
-        console.error('Google Sign-In Error:', error);
         toast.error('Google Sign-In Error');
       });
   };
 
-  // GitHub Sign In
   const handleGitHubResponse = () => {
     const provider = new GithubAuthProvider();
     signInWithPopup(auth, provider)
       .then(async (result) => {
-        console.log('GitHub Signed In:', result.user);
         toast.success('Successfully logged in with GitHub');
         setUser({ email: result.user.email });
-        navigate('/');  // Redirect after GitHub login
+        navigate('/');
       })
       .catch((error) => {
-        console.error('GitHub Sign-In Error:', error);
         toast.error('GitHub Sign-In Error');
       });
   };
@@ -156,15 +150,15 @@ const Login = () => {
         </button>
       </form>
       {isLogin && (
-        <a href="/forgot-password" className="forgot-password">Forgot your password?</a>
+        <a href="/forgot-password" className="forgot-password">forgot your password?</a>
       )}
       <div className="social-login">
         <p>Sign in with:</p>
         <button className="google-login-button" onClick={handleGoogleSignIn} disabled={loading}>
-          Sign in with Google
+          <FontAwesomeIcon icon={faGoogle} /> Sign in with Google
         </button>
         <button className="github-login-button" onClick={handleGitHubResponse} disabled={loading}>
-          Sign in with GitHub
+          <FontAwesomeIcon icon={faGithub} /> Sign in with GitHub
         </button>
       </div>
 

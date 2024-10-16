@@ -42,33 +42,23 @@ function Navbar() {
       toast.error('Failed to logout, please try again.'); // Handle logout errors if needed
     }
   };
-  
+
 
   return (
     <nav>
-   <div className="logo">
-      <Link to="/" className="logo-link">
-        <img src={logo} alt="ZonKart" className="logo-img" />
-      </Link>
-    </div>
+      <div className="logo">
+        <Link to="/" className="logo-link">
+          <img src={logo} alt="ZonKart" className="logo-img" />
+        </Link>
+      </div>
       <div className="nav-links">
-        <div onClick={goToCart} style={{ position: 'relative', cursor: 'pointer' }}>
-        <FontAwesomeIcon icon={faCartShopping} className="cart-icon" />
+        <Link to="/cart" className="cart-icon-container">
+          <FontAwesomeIcon icon={faCartShopping} className="cart-icon" />
           {cart.length > 0 && (
-            <span style={{
-              position: 'absolute',
-              top: '-10px',
-              right: '-10px',
-              backgroundColor: '#e74c3c',
-              color: '#ecf0f1',
-              borderRadius: '50%',
-              padding: '4px 8px',
-              fontSize: '0.4em'
-            }}>
-              {cart.length}
-            </span>
+            <span className="cart-badge">{cart.length}</span>
           )}
-        </div>
+        </Link>
+
         {currentUser ? (
           <div style={{ position: 'relative' }}>
             {/* Initials displayed in a circle */}
