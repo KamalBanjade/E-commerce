@@ -50,14 +50,43 @@ nav a {
   font-weight: 600;
   transition: all 0.3s ease;
   padding: 0.5rem 1rem;
-  border-radius: 20px;
+  border-radius: 40px;
   position: relative; /* For positioning the pseudo-element */
 }
-
-nav a:hover {
-  background-color: #ff8c00;
-  color: #ffffff;
+.logo {
+  position: relative;
 }
+
+.logo-img {
+  width: 50px; /* Adjust as needed */
+  height: auto; /* Maintain aspect ratio */
+  transition: opacity 0.3s ease;
+}
+
+
+
+.cart-icon {
+  font-size: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.cart-icon:hover {
+  color: #ff2f00;
+}
+
+.login-link {
+  text-decoration: none; /* Optional, to remove underline */
+  color: #000; /* Set initial text color */
+  padding: 5px 10px; /* Add padding if necessary */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.login-link:hover {
+  background-color: #ff2f00; /* Hover background color */
+  color: #fff; /* Optional: Change text color on hover */
+  border-radius: 20px; /* Optional: Add border-radius for rounded corners */
+}
+
 @media (max-width: 768px) {
   nav {
     flex-direction: column;
@@ -569,6 +598,7 @@ p {
   border-left-color: #4CAF50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-left: 530px;
 }
 
 @keyframes spin {
@@ -749,10 +779,11 @@ input:focus {
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 10px;
 }
 
 .google-login-button {
-  background-color: #ff2f00; /* Red for Google */
+  background-color: #00d0ff; /* Red for Google */
 }
 
 .github-login-button {

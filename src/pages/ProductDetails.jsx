@@ -3,14 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { fetchProductById } from '../services/api';
 import { useCart } from '../context/CartContext';
 import { FaStar, FaShoppingCart } from 'react-icons/fa';
-import { ToastContainer, toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext'; // Import AuthContext
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../App.css';
+
 
 function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const { addToCart } = useCart();
+  const { currentUser } = useAuth(); // Destructure currentUser from AuthContext
   const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
@@ -19,15 +22,7 @@ function ProductDetails() {
         const fetchedProduct = await fetchProductById(id);
         setProduct(fetchedProduct);
       } catch (error) {
-        toast.error('Failed to load product data.', {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        console.error('Failed to load product data');
       }
     };
 
@@ -43,21 +38,19 @@ function ProductDetails() {
   }
 
   const handleAddToCart = () => {
-    addToCart(product);
-    toast.success(`${product.title} added to cart!`, {
-      position: "top-right",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    // Check if the user is logged in
+    if (!currentUser) {
+      // Redirect to login page with a custom message
+      navigate('/login', { state: { message: 'Please login in order to add products to the cart.' } });
+    } else {
+      addToCart(product);
+      toast.success('Product added to cart');
 
-    // Navigate to the home page after adding to cart
-    setTimeout(() => {
-      navigate('/');
-    }, 2000); 
+      // Optionally navigate to home after adding to cart
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    }
   };
 
   return (
@@ -101,8 +94,6 @@ function ProductDetails() {
           </div>
         </div>
       </div>
-
-      <ToastContainer />
     </div>
   );
 }

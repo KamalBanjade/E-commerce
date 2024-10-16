@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation for state
 import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../firebase'; // Firebase config
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; 
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);  // Toggle between login and register
@@ -12,92 +13,79 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(''); // For registration
   const [loading, setLoading] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // Prevent multiple popups
+  const { setUser } = useAuth();  // Destructure setUser from AuthContext
   const navigate = useNavigate();
+  const location = useLocation(); // To access state passed from ProductDetails
 
   // Handle form submission for login/registration
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Validate passwords if registering
-    if (!isLogin && password !== confirmPassword) {
-      toast.error('Passwords do not match!');
-      setLoading(false);
-      return;
-    }
-
     const payload = isLogin 
       ? { email, password } 
-      : { fname, email, password, cpassword: confirmPassword }; // Backend expects `fname` and `cpassword`
+      : { fname, email, password, cpassword: confirmPassword };
 
     const url = isLogin ? 'http://localhost:8009/login' : 'http://localhost:8009/register';
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload), 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
-      console.log(isLogin ? 'Login Response:' : 'Registration Response:', data); 
-
       if (data.status === 201 || data.status === 'success') {
         toast.success(isLogin ? 'Successfully logged in' : 'Successfully registered');
-        setTimeout(() => navigate('/'), 1300);  // Redirect to home after success
+        setUser({ email: payload.email });
+        navigate('/');  // Redirect to home after login
       } else {
         toast.error(data.message || 'Failed to process request');
       }
     } catch (error) {
-      console.error(isLogin ? 'Login Error:' : 'Registration Error:', error);
       toast.error(isLogin ? 'Login Error' : 'Registration Error');
     }
-    
     setLoading(false);
   };
 
-  // Google Sign In (already implemented)
-  const handleGoogleSignIn = () => {
-    if (isPopupOpen) return; // Prevent multiple popups
-    setIsPopupOpen(true);
+  // Extract custom message from location state (if any)
+  const customMessage = location.state?.message;
 
+  // Google Sign In
+  const handleGoogleSignIn = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then(async (result) => {
         console.log('Google Signed In:', result.user);
         toast.success('Successfully logged in with Google');
-        setTimeout(() => navigate('/'), 2000);  // Redirect after Google login
+        setUser({ email: result.user.email });
+        navigate('/');  // Redirect after Google login
       })
       .catch((error) => {
         console.error('Google Sign-In Error:', error);
         toast.error('Google Sign-In Error');
-      })
-      .finally(() => setIsPopupOpen(false));
+      });
   };
 
-  // GitHub Sign In (already implemented)
+  // GitHub Sign In
   const handleGitHubResponse = () => {
-    if (isPopupOpen) return;
-    setIsPopupOpen(true);
-
     const provider = new GithubAuthProvider();
     signInWithPopup(auth, provider)
       .then(async (result) => {
         console.log('GitHub Signed In:', result.user);
         toast.success('Successfully logged in with GitHub');
-        setTimeout(() => navigate('/'), 2000);  // Redirect after GitHub login
+        setUser({ email: result.user.email });
+        navigate('/');  // Redirect after GitHub login
       })
       .catch((error) => {
         console.error('GitHub Sign-In Error:', error);
         toast.error('GitHub Sign-In Error');
-      })
-      .finally(() => setIsPopupOpen(false));
+      });
   };
 
   return (
     <div className="auth-container">
+      {customMessage && <h3 className="custom-message">{customMessage}</h3>}
       {isLogin ? (
         <>
           <h2>Sign in</h2>
@@ -167,25 +155,17 @@ const Login = () => {
           {loading ? (isLogin ? 'Signing in...' : 'Registering...') : (isLogin ? 'Sign in' : 'Register')}
         </button>
       </form>
-
       {isLogin && (
         <a href="/forgot-password" className="forgot-password">Forgot your password?</a>
       )}
-
       <div className="social-login">
         <p>Sign in with:</p>
-
-        <div className="google-login-container">
-          <button className="google-login-button" onClick={handleGoogleSignIn} disabled={isPopupOpen}>
-            Sign in with Google
-          </button>
-        </div>
-
-        <div className="github-login-container">
-          <button className="github-login-button" onClick={handleGitHubResponse} disabled={isPopupOpen}>
-            Sign in with GitHub
-          </button>
-        </div>
+        <button className="google-login-button" onClick={handleGoogleSignIn} disabled={loading}>
+          Sign in with Google
+        </button>
+        <button className="github-login-button" onClick={handleGitHubResponse} disabled={loading}>
+          Sign in with GitHub
+        </button>
       </div>
 
       <ToastContainer />

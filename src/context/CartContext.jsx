@@ -1,14 +1,26 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
+import { useAuth } from './AuthContext'; // Import AuthContext to access currentUser
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const { currentUser } = useAuth(); // Get the current user from AuthContext
+  const [cart, setCart] = useState(() => {
+    // Load user-specific cart from localStorage
+    const savedCart = currentUser ? localStorage.getItem(`cart_${currentUser.email}`) : null;
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      // Save cart to user-specific localStorage key whenever the cart changes
+      localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
+    }
+  }, [cart, currentUser]);
 
   // Add item to cart
   const addToCart = (product) => {
     const existingItem = cart.find(item => item.id === product.id);
-
     if (existingItem) {
       // If item exists, increase its quantity
       setCart(cart.map(item => 
@@ -20,7 +32,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Remove one item from the cart or decrease quantity
+  // Update item quantity in the cart
   const updateCartQuantity = (id, newQuantity) => {
     setCart(cart.map(item => 
       item.id === id ? { ...item, quantity: newQuantity } : item
@@ -32,8 +44,16 @@ export const CartProvider = ({ children }) => {
     setCart(cart.filter(item => item.id !== id));
   };
 
+  // Clear cart (used during logout)
+  const clearCart = () => {
+    setCart([]);
+    if (currentUser) {
+      localStorage.removeItem(`cart_${currentUser.email}`); // Clear user-specific cart from localStorage
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateCartQuantity }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateCartQuantity, clearCart }}>
       {children}
     </CartContext.Provider>
   );
