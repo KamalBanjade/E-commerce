@@ -689,6 +689,7 @@ input {
   border-radius: 5px;
   background-color: #f9f9f9;
   font-size: 16px;
+  color: #222;
 }
 
 input:focus {

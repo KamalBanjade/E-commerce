@@ -8,6 +8,8 @@ import Navbar from './components/Navbar';
 import Login from './pages/login';  // Make sure 'Login' is capitalized to match the file import
 import './App.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';  // Import GoogleOAuthProvider
+import ForgotPassword from './pages/forgotpassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   const clientId = '752461170853-faqj9ibikbohaii6g9u2a7ouossrd01e.apps.googleusercontent.com';  // Your Google client ID
@@ -23,6 +25,8 @@ function App() {
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/login" element={<Login />} />  {/* Login route */}
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forgotpassword/:id/:token" element={<ResetPassword />} /> 
             </Routes>
           </div>
         </Router>
