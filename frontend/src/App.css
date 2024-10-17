@@ -585,48 +585,85 @@ p {
   margin-bottom: 15px;
 }
 
-.reviews-section h3 {   
-  font-size: 1.8rem;   
-  color: #222;   
-  margin-bottom: 15px;
+.review-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
 }
 
-.review-item {   
-  background-color: #fff;   
-  padding: 20px;   
-  border-radius: 12px;   
-  margin-bottom: 20px;   
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);   
-  display: flex;   
-  align-items: flex-start;   
-  gap: 20px;
+.review-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
 }
 
-.review-item img {   
-  width: 60px;   
-  height: 60px;   
-  border-radius: 50%;   
-  object-fit: cover;
+.review-content {
+  max-width: 600px;
 }
 
-.review-content {   
-  flex: 1;
+.review-content h4 {
+  margin: 0;
 }
 
-.review-content h4 {   
-  font-size: 1.4rem;   
-  color: #222;   
+.star-rating {
+  color: #ffb400;
+}
+
+.add-review-section {
+  margin-top: 40px;
+}
+
+.add-review-section textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: none;
+  background-color: #f9f9f9; /* Light grey background */
+  color: #333; /* Dark text color */
+  font-size: 16px;
+}
+
+.add-review-section textarea::placeholder {
+  color: #888; /* Slightly lighter text color for placeholder */
+}
+.star-rating {
+  display: flex;
+  justify-content: flex-start;
+  pointer-events: auto; /* Ensure stars are clickable */
+}
+
+.star-filled {
+  color: #ffb400;
+  cursor: pointer; /* Ensure it shows as clickable */
+}
+
+.star-empty {
+  color: #ddd;
+  cursor: pointer;
+}
+
+.comment-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   margin-bottom: 10px;
 }
 
-.review-content p {   
-  font-size: 1.2rem;   
-  color: #666;
+.submit-comment-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.star-rating {   
-  color: #ff8c00;   
-  margin-bottom: 10px;
+.submit-comment-button:hover {
+  background-color: #45a049;
 }
 
 /* Loading spinner */
@@ -668,6 +705,7 @@ p {
     padding: 10px;
   }
 }
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;

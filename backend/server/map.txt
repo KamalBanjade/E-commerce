@@ -1,0 +1,88 @@
+Sign_In_Form
+│
+├── client/
+│   
+├── models/
+│   └── forms.js
+│
+└── server/
+    ├── app.js
+    ├── config/
+    │   └── db.js
+    │
+    └── routes/
+        └── api/
+            └── Register.js
+            └── SignIn.js
+
+User Registration
+Route: /api/register
+Function: Registers a new user with email, username, and password.
+Process:
+Receives user details (email, username, password) from the client.
+Hashes the password using bcrypt.
+Stores the user information, including the hashed password, in the database.
+User Sign-In
+Route: /api/signin
+Function: Authenticates a user with email and password.
+Process:
+Receives login credentials (email, password) from the client.
+Finds the user in the database by email.
+Compares the provided password with the stored hashed password using bcrypt.
+If the comparison is successful, the user is authenticated. If not, an error message is returned.
+Password Reset Request
+Route: /api/passwordreset
+Function: Initiates a password reset process by generating a token.
+Process:
+Receives the user's email.
+Checks if the user exists in the database.
+Generates a reset token and sets an expiration time for the token.
+Saves the token and expiration time in the user's record.
+Sends an email to the user with a link to reset the password, including the token.
+Password Reset
+Route: /api/passwordreset/reset-password
+Function: Resets the user's password using the token.
+Process:
+Receives the reset token and new password from the client.
+Finds the user by the token and ensures the token is not expired.
+Hashes the new password using bcrypt.
+Updates the user's password in the database.
+Clears the reset token and expiration time from the user's record.
+Issue Faced
+Scenario:
+User successfully registers and logs in.
+User requests a password reset and receives an email with a reset token.
+User resets the password using the token, and the new hashed password is stored in the database.
+When the user tries to log in with the new password, authentication fails due to a password mismatch.
+Observations:
+The password comparison using bcrypt during login returns false, even though the new hashed password appears to be correctly stored.
+This suggests an issue with how passwords are handled or compared after the reset process.
+Debugging Steps Taken
+Logging:
+
+Added logs to display the received and stored passwords during sign-in.
+Confirmed that the password reset correctly updates the hashed password in the database.
+Direct Password Comparison:
+
+Used a standalone script to manually compare the provided password with the stored hashed password.
+Possible Issues
+Password Handling:
+
+Ensure passwords are correctly handled without extra characters or encoding issues.
+Middleware:
+
+Check if any middleware is altering the request data.
+Environment Consistency:
+
+Ensure the same bcrypt version is used in all environments.
+Next Steps
+Ensure Clean Password Handling:
+
+Verify that passwords are correctly passed and received without unintended modifications.
+Confirm Middleware:
+
+Ensure middleware does not alter passwords or user data.
+Use Minimal Scripts:
+
+Isolate the password comparison logic to ensure it works as expected.
+By thoroughly checking these aspects, you can pinpoint and resolve the issue with password comparison during the sign-in process.            

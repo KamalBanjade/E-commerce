@@ -8,9 +8,21 @@ function Home() {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts().then(setProducts);
+    const loadProducts = async () => {
+      try {
+        const fetchedProducts = await fetchProducts();
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Failed to load products');
+      } finally {
+        setLoading(false); // Stop loading after fetching products
+      }
+    };
+
+    loadProducts();
   }, []);
 
   const sortedProducts = [...products].sort((a, b) => {
@@ -25,6 +37,14 @@ function Home() {
   const filteredProducts = sortedProducts.filter(product =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="home-container">
@@ -58,7 +78,11 @@ function Home() {
           <div key={product.id} className="product-card">
             <Link to={`/products/${product.id}`} className="product-link">
               <div className="product-image-container">
-                <img src={product.image} alt={product.title} className="product-image" />
+                <img
+                  src={product.image || "/placeholders.JPG"}
+                  alt={product.title}
+                  className="product-image"
+                />
               </div>
               <div className="product-info">
                 <h2 className="product-title">{product.title}</h2>
