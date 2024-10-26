@@ -3,67 +3,84 @@ import { useCart } from '../context/CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import Auth context
-import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from 'react';
 import logo from '/logo.png';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { fetchCategories } from '../services/api';
 
-
-function Navbar() {
-  const { cart, clearCart } = useCart(); // Destructure clearCart from CartContext
-  const { currentUser, logout } = useAuth(); // Destructure currentUser and logout from AuthContext
+function Navbar({ onCategorySelect }) {
+  const { cart, clearCart } = useCart();
+  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false); // Manage dropdown state
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false); // Manage categories dropdown state
+  const [categories, setCategories] = useState([]); // State to store categories
 
-  // Function to navigate to the cart page
-  const goToCart = () => {
-    navigate('/cart');
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const fetchedCategories = await fetchCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        toast.error('Failed to load categories');
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Function to toggle category dropdown
+  const toggleCategories = () => {
+    setCategoriesOpen(!categoriesOpen);
   };
 
-  // Function to get initials from email
-  const getInitials = (email) => {
-    if (!email) return '';
-    const parts = email.split('@')[0].split('.'); // Extract initials from email
-    return parts.map(part => part[0].toUpperCase()).join('');
+  const handleCategoryClick = (category) => {
+    onCategorySelect(category); // Trigger the function passed as a prop to filter products
+    setCategoriesOpen(false); // Close the dropdown after selection
   };
-
-  // Toggle the dropdown menu
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  const handleLogout = async () => {
-    clearCart(); // Clear the cart when logging out
-    try {
-      await logout(); // Ensure the logout is completed
-      navigate('/'); // Navigate to login page after logout
-    } catch (error) {
-      toast.error('Failed to logout, please try again.'); // Handle logout errors if needed
-    }
-  };
-
 
   return (
     <nav>
+      {/* Logo and Cart */}
       <div className="logo">
         <Link to="/" className="logo-link">
           <img src={logo} alt="ZonKart" className="logo-img" />
         </Link>
       </div>
       <div className="nav-links">
+        {/* Categories Dropdown */}
+        <div style={{ position: 'relative' }}>
+          <button onClick={toggleCategories} className="category-button">
+            Categories
+          </button>
+          {categoriesOpen && (
+            <div className="category-dropdown">
+              {categories.map((category) => (
+                <div
+                  key={category}
+                  className="category-item"
+                  onClick={() => handleCategoryClick(category)}
+                >
+                  {category}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Cart */}
         <Link to="/cart" className="cart-icon-container">
           <FontAwesomeIcon icon={faCartShopping} className="cart-icon" />
-          {cart.length > 0 && (
-            <span className="cart-badge">{cart.length}</span>
-          )}
+          {cart.length > 0 && <span className="cart-badge">{cart.length}</span>}
         </Link>
 
+        {/* Login or User Dropdown */}
         {currentUser ? (
           <div style={{ position: 'relative' }}>
-            {/* Initials displayed in a circle */}
             <div
-              onClick={toggleDropdown}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
               style={{
                 width: '40px',
                 height: '40px',
@@ -77,10 +94,8 @@ function Navbar() {
                 cursor: 'pointer'
               }}
             >
-              {getInitials(currentUser.email)}
+              {currentUser.email[0].toUpperCase()}
             </div>
-
-            {/* Dropdown menu */}
             {dropdownOpen && (
               <div
                 style={{
@@ -94,9 +109,12 @@ function Navbar() {
                   zIndex: '1000',
                 }}
               >
-                <p style={{ margin: 0 }}>{currentUser.email}</p> {/* Show user's email */}
+                <p style={{ margin: 0 }}>{currentUser.email}</p>
                 <button
-                  onClick={handleLogout} // Call handleLogout on button click
+                  onClick={async () => {
+                    await logout();
+                    navigate('/');
+                  }}
                   style={{
                     marginTop: '10px',
                     backgroundColor: '#e74c3c',

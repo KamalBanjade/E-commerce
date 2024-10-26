@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchProductById } from '../services/api';
+import { fetchProductById, addReviewForProduct, fetchReviewsForProduct } from '../services/api';
 import { useCart } from '../context/CartContext';
 import { FaStar, FaShoppingCart } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -10,34 +10,38 @@ import '../App.css';
 
 function ProductDetails() {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const { addToCart } = useCart();
-  const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const [reviews, setReviews] = useState([
-    {
-      reviewer: 'John Doe',
-      rating: 5,
-      content: 'This product is amazing! Highly recommended.',
-    },
-  ]); // Placeholder review
+  const { currentUser } = useAuth();
+  const { addToCart } = useCart();
+
+  const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [newRating, setNewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 
+  // Load product and reviews on component mount
   useEffect(() => {
-    const loadProduct = async () => {
+    const loadProductAndReviews = async () => {
       try {
-        const fetchedProduct = await fetchProductById(id);
-        setProduct(fetchedProduct);
+        // Fetch product data
+        const productData = await fetchProductById(id);
+        setProduct(productData);
+
+        // Fetch reviews for the product
+        try {
+          const productReviews = await fetchReviewsForProduct(id);
+          setReviews(productReviews);
+        } catch {
+          setReviews([]); // Set to an empty array if fetching reviews fails
+        }
       } catch (error) {
-        console.error('Failed to load product data');
-        toast.error('Failed to load product data');
+        console.error("Failed to load product or review data:", error.message);
+        toast.error(`Error: ${error.message}`);
       }
     };
-
-    loadProduct();
-  }, [id]);
+    loadProductAndReviews();
+}, [id]);
 
   if (!product) {
     return (
@@ -49,80 +53,69 @@ function ProductDetails() {
 
   const handleAddToCart = () => {
     if (!currentUser) {
-      navigate('/login', {
-        state: { message: 'Please login to add products to the cart.' },
-      });
+      navigate('/login', { state: { message: 'Please login to add products to the cart.' } });
       toast.warn('Please login to add items to your cart');
     } else {
       addToCart(product);
       toast.success('Product added to cart');
-      // setTimeout(() => {
-      //   navigate('/');
-      // }, 2000);
     }
   };
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
 
     if (!currentUser) {
-      // If user is not logged in, redirect them to login
-      toast.warn('Please login to submit a review.');
-      navigate('/login', {
-        state: { message: 'Please login to submit a review.' },
-      });
-      return;
+        navigate('/login', { state: { message: 'Please login to submit a review.' } });
+        toast.warn('Please login to submit a review');
+        return;
     }
 
     if (!newComment || newRating === 0) {
-      toast.warn('Please provide a review and rating.');
-      return;
+        toast.warn('Please provide a review and rating.');
+        return;
     }
 
-    // Extract name from email (before the @)
-    const nameFromEmail = currentUser.email.split('@')[0];
-
-    const newReview = {
-      reviewer: nameFromEmail,
-      rating: newRating,
-      content: newComment,
+    // Ensure the id is correctly passed
+    const reviewData = {
+        user: currentUser._id,
+        productId: id, // Ensure `id` is directly used here and is a string or number
+        rating: newRating,
+        comment: newComment,
     };
 
-    setReviews([...reviews, newReview]); // Append the new review
-    setNewComment(''); // Reset the comment field
-    setNewRating(0); // Reset the rating
-    toast.success('Review submitted successfully!');
-  };
+    try {
+        const addedReview = await addReviewForProduct(id, reviewData); // Pass `id` directly
+        setReviews([...reviews, addedReview]);
+        setNewComment('');
+        setNewRating(0);
+        toast.success('Review submitted successfully!');
+    } catch (error) {
+        console.error('Failed to submit review', error);
+        toast.error('Failed to submit review');
+    }
+};
+
 
   const renderStars = (rating, isStatic = false) => {
-    const effectiveRating = hoverRating || newRating || rating; // Use hoverRating first, then newRating
+    const effectiveRating = hoverRating || newRating || rating;
     return [...Array(5)].map((_, i) => (
       <FaStar
         key={i}
         className={i < effectiveRating ? 'star-filled' : 'star-empty'}
-        onClick={() => {
-          if (!isStatic) {
-            setNewRating(i + 1); // Set the rating on click
-          }
-        }}
-        onMouseEnter={() => !isStatic && setHoverRating(i + 1)} // Set hover rating
-        onMouseLeave={() => !isStatic && setHoverRating(0)} // Reset hover rating
-        style={{ cursor: isStatic ? 'default' : 'pointer' }} // Apply pointer for interactivity
+        onClick={() => !isStatic && setNewRating(i + 1)}
+        onMouseEnter={() => !isStatic && setHoverRating(i + 1)}
+        onMouseLeave={() => !isStatic && setHoverRating(0)}
+        style={{ cursor: isStatic ? 'default' : 'pointer' }}
       />
     ));
   };
-
 
   return (
     <div className="product-details-container">
       <ToastContainer />
       <div className="product-details">
         <div className="product-image-container">
-          <img
-            src={product.image || '/placeholder.jpg'}
-            alt={product.title || 'Product Image'}
-            className="product-image"
-          />
+          <img src={product.image || '/placeholder.jpg'} alt={product.title || 'Product Image'} className="product-image" />
         </div>
         <div className="product-info">
           <h1 className="product-title">{product.title}</h1>
@@ -131,6 +124,10 @@ function ProductDetails() {
             <span>({product.rating?.count || 0} reviews)</span>
           </div>
           <p className="product-description">{product.description}</p>
+          <div className="product-category">
+            <h4>Category:</h4>
+            <span className="product-category-label">{product.category || 'Uncategorized'}</span>
+          </div>
           <h3 className="product-price">${product.price.toFixed(2)}</h3>
           <button className="product-button" onClick={handleAddToCart}>
             <FaShoppingCart /> Add to Cart
@@ -140,22 +137,19 @@ function ProductDetails() {
 
       <div className="reviews-section">
         <h3>Customer Reviews</h3>
-
-        {/* Existing Reviews */}
         {reviews.map((review, index) => (
-          <div key={index} className="review-item">
-            <img src="/placeholder.png" alt="Reviewer" />
-            <div className="review-content">
-              <h4>{review.reviewer}</h4>
-              <div className="star-rating">
-                {renderStars(review.rating, true)}
-              </div>
-              <p>{review.content}</p>
-            </div>
-          </div>
-        ))}
+    <div key={index} className="review-item">
+        <img src="/placeholder.png" alt="Reviewer" />
+        <div className="review-content">
+            <h4>{review.user?.fname || 'Anonymous'}</h4>
+            <div className="star-rating">{renderStars(review.rating, true)}</div>
+            <p>{review.comment}</p>
+        </div>
+    </div>
+))}
 
-        {/* Add a New Comment */}
+
+
         <div className="add-review-section">
           <h4>Leave a Review</h4>
           {currentUser ? (
@@ -168,12 +162,9 @@ function ProductDetails() {
                 rows="4"
                 required
               ></textarea>
-
-              {/* Selectable Star Rating */}
               <div className="select-rating">
                 <div className="star-rating">{renderStars(hoverRating || newRating)}</div>
               </div>
-
               <button type="submit" className="submit-comment-button">
                 Submit Review
               </button>
@@ -182,7 +173,6 @@ function ProductDetails() {
             <p>Please <a href="/login">log in</a> to leave a review.</p>
           )}
         </div>
-
       </div>
     </div>
   );

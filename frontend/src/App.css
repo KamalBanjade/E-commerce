@@ -8,6 +8,7 @@ body,html {
   line-height: 1.6;
   overflow-x: hidden; 
 }
+
 nav {
   display: flex;
   justify-content: space-between;
@@ -457,6 +458,7 @@ p {
 
 /* ProductDetails.css */
 /* Overall container styling */
+
 .product-details-container {   
   max-width: 100%;   
   margin: 40px auto;   
@@ -573,6 +575,45 @@ p {
   background-color: #45a049;   
   transform: translateY(-2px);   
   box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+}
+.product-category {
+  margin-top: 20px; /* Spacing from the description */
+}
+
+.product-category-label {
+  display: inline-block;
+  padding: 8px 15px;
+  background-color: #3498db; /* Blue background */
+  color: #fff; /* White text */
+  
+  font-size: 1rem;
+  font-weight: 600;
+}
+.category-button {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.category-dropdown {
+  position: absolute;
+  top: 40px;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.category-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.category-item:hover {
+  background-color: #f1f1f1;
 }
 
 

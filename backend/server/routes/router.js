@@ -5,6 +5,9 @@ var bcrypt = require("bcryptjs");
 const authenticate = require("../middleware/authenticate");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const Review = require("../models/review");
+
+
 
 const keysecret = "akldfjkdfkdfkdggkfjkdkadkfjirwekjrkdjfsd"
 
@@ -16,7 +19,9 @@ const transporter = nodemailer.createTransport({
         pass: 'sfio nrlp bnvy cszo',
     }
 })
-
+router.get('/', (req, res) => {
+    res.send('Welcome to the API!');
+});
 // User Registration
 router.post("/register", async (req, res) => {
     console.log('Request Body:', req.body); // Log the request body
